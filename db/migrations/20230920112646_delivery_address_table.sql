@@ -11,7 +11,7 @@ CREATE TABLE `delivery_address` (
 );
 
 ALTER TABLE `delivery_address` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-ALTER TABLE `delivery_address` ADD FOREIGN KEY (`id`) REFERENCES `user_orders` (`address_id`);
+
 
 -- migrate:down
   DROP TABLE delivery_address;
