@@ -200,21 +200,22 @@ CREATE TABLE `user_orders` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `order_number` int NOT NULL,
-  `order_date` timestamp NOT NULL,
   `address_id` int NOT NULL,
   `zipcode` varchar(20) NOT NULL,
   `address1` varchar(50) NOT NULL,
   `address2` varchar(50) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `payment` varchar(20) NOT NULL,
+  `payment_id` int NOT NULL,
   `order_status` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `order_status` (`order_status`),
   KEY `address_id` (`address_id`),
+  KEY `payment_id` (`payment_id`),
   CONSTRAINT `user_orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `user_orders_ibfk_2` FOREIGN KEY (`order_status`) REFERENCES `order_status` (`id`),
-  CONSTRAINT `user_orders_ibfk_3` FOREIGN KEY (`address_id`) REFERENCES `delivery_address` (`id`)
+  CONSTRAINT `user_orders_ibfk_3` FOREIGN KEY (`address_id`) REFERENCES `delivery_address` (`id`),
+  CONSTRAINT `user_orders_ibfk_4` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -229,7 +230,7 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL,
   `password` varchar(200) NOT NULL,
   `name` varchar(20) NOT NULL,
-  `point` int NOT NULL,
+  `user_point` int NOT NULL,
   `zipcode` varchar(20) NOT NULL,
   `address1` varchar(50) NOT NULL,
   `address2` varchar(50) DEFAULT NULL,
@@ -239,7 +240,9 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
+  UNIQUE KEY `email` (`email`),
+  KEY `user_point` (`user_point`),
+  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`user_point`) REFERENCES `points` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
