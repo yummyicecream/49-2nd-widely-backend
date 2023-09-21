@@ -7,7 +7,7 @@ CREATE TABLE `products` (
   `stock` int NOT NULL,
   `description` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
 );
 
 ALTER TABLE `products` ADD FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);

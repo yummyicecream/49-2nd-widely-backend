@@ -6,7 +6,7 @@ CREATE TABLE `carts` (
   `product_qty` int NOT NULL,
   `status_id` int NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
 );
 
 ALTER TABLE `carts` ADD FOREIGN KEY (`status_id`) REFERENCES `cart_status` (`id`);

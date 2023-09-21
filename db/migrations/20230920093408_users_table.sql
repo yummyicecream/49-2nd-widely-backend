@@ -12,7 +12,7 @@ CREATE TABLE `users` (
   `birthday` date,
   `terms` tinyint(1),
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `deleted_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP
+  `deleted_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
 );
 
 ALTER TABLE `users` ADD FOREIGN KEY (`user_point`) REFERENCES `points` (`id`);
