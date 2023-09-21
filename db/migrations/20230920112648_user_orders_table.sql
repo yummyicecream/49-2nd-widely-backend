@@ -16,6 +16,7 @@ CREATE TABLE `user_orders` (
 ALTER TABLE `user_orders` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 ALTER TABLE `user_orders` ADD FOREIGN KEY (`order_status`) REFERENCES `order_status` (`id`);
 ALTER TABLE `user_orders` ADD FOREIGN KEY (`address_id`) REFERENCES `delivery_address` (`id`);
+ALTER TABLE `user_orders` ADD FOREIGN KEY (`payment_id`) REFERENCES `payments` (`id`);
 
 -- migrate:down
   DROP TABLE user_orders;

@@ -15,6 +15,8 @@ CREATE TABLE `users` (
   `deleted_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP
 );
 
+ALTER TABLE `users` ADD FOREIGN KEY (`user_point`) REFERENCES `points` (`id`);
+
 -- migrate:down
     DROP TABLE users;
 
