@@ -4,7 +4,8 @@ CREATE TABLE `order_details` (
   `order_id` int NOT NULL,
   `product_id` int NOT NULL,
   `product_count` int NOT NULL,
-  `product_price` int NOT NULL
+  `product_price` int NOT NULL,
+  `delivery_fee` int NOT NULL
 );
 
 ALTER TABLE `order_details` ADD FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
