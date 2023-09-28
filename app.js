@@ -8,7 +8,7 @@ dotenv.config();
 
 const { AppDataSource } = require('./src/models/data-source');
 
-// const { routes } = require("./src/routes");
+const { routes } = require('./src/routes');
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-// app.use(routes);
+app.use(routes);
 
 app.get('/', async (req, res) => {
   try {
@@ -42,9 +42,7 @@ app.use((err, _, res, next) => {
 const start = async () => {
   // 서버를 시작하는 함수입니다.
   try {
-    await AppDataSource.initialize().then(() =>
-      console.log('Datasource initialized.'),
-    );
+    await AppDataSource.initialize().then(() => console.log('Datasource initialized.'));
     const port = process.env.SERVER_PORT;
     app.listen(port, () => console.log(`Server is listening on '${port}'`));
   } catch (err) {
