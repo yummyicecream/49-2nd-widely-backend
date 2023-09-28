@@ -16,4 +16,14 @@ const throwError = (code, message) => {
   throw error;
 };
 
-module.exports = { generateToken, throwError };
+const asyncWrap = (asyncController) => {
+  return async (req, res, next) => {
+    try {
+      await asyncController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
+module.exports = { generateToken, throwError, asyncWrap };
