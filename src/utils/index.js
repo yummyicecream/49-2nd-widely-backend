@@ -13,7 +13,7 @@ const generateToken = (userId) => {
 const throwError = (code, message) => {
   const error = new Error(message);
   error.status = code;
-  return error;
+  throw error;
 };
 
 module.exports = { generateToken, throwError };
