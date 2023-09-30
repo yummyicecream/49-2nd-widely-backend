@@ -41,4 +41,4 @@ const createUserAndPoint = async (
   return userSignUpPoint;
 };
 
-module.exports = { emailDuplicateCheck };
+module.exports = { emailDuplicateCheck, createUserAndPoint };
