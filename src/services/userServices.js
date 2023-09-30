@@ -30,4 +30,8 @@ const registerUser = async (email, password, name, address1, address2, address3,
   }
 };
 
-module.exports = { isEmailUnique, registerUser };
+const userPasswordCheck = async (password, userPassword) => {
+  return await bcrypt.compare(password, userPassword);
+};
+
+module.exports = { isEmailUnique, registerUser, userPasswordCheck };

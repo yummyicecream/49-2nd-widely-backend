@@ -3,7 +3,7 @@ const { AppDataSource } = require('./data-source');
 const emailDuplicateCheck = async (email) => {
   const emailCheck = await AppDataSource.query(
     `
-  SELECT email
+  SELECT id, email, password
   FROM users
   WHERE email = ?;`,
     [email],

@@ -1,6 +1,6 @@
-const { throwError } = require('../utils');
+const { throwError, generateToken } = require('../utils');
 const { userServices } = require('../services');
-const { isEmailUnique, registerUser } = userServices;
+const { isEmailUnique, registerUser, userPasswordCheck } = userServices;
 
 const signup = async (req, res, next) => {
   try {
@@ -42,4 +42,35 @@ const signup = async (req, res, next) => {
   }
 };
 
-module.exports = { signup };
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    // 키에러 체크
+    if (!email || !password) throwError(403, 'Key error');
+
+    // 이메일 체크
+    const [emailCheck] = await isEmailUnique(email);
+    if (!emailCheck) throwError(401, 'Not found email');
+
+    // 비밀번호 체크
+    const userPassword = emailCheck.password;
+    const passwordCheck = await userPasswordCheck(password, userPassword);
+
+    if (passwordCheck) {
+      // 토큰 생성
+      if (!generateToken(emailCheck.id)) throwError(401, 'Token generation failure');
+
+      return res.status(200).json({
+        message: 'login success',
+        token: `${generateToken(emailCheck.id)}`,
+        id: `${emailCheck.id}`,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
+
+module.exports = { signup, login };
