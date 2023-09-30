@@ -25,7 +25,10 @@ const signup = async (req, res, next) => {
     }
 
     // 중복된 이메일 체크
-    await isEmailUnique(email);
+    const emailCheck = await isEmailUnique(email);
+    if (emailCheck) {
+      throwError(400, 'Duplicate email address');
+    }
 
     // 유저 회원가입
     await registerUser(email, password, name, address1, address2, address3, phonenumber, birthday, terms);
