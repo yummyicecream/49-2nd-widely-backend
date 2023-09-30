@@ -1,13 +1,13 @@
 const order = async (sort) => {
   switch (sort) {
     case 'lowprice':
-      return `ORDER BY products.price ASC`;
+      return `ORDER BY p.price ASC`;
     case 'highprice':
-      return `ORDER BY products.price DESC`;
+      return `ORDER BY p.price DESC`;
     case 'latest':
-      return `ORDER BY products.created_at DESC`;
+      return `ORDER BY p.created_at DESC`;
     default:
-      return `ORDER BY products.id_at ASC`;
+      return `ORDER BY p.id_at ASC`;
   }
 };
 
@@ -23,7 +23,7 @@ const categoryA = async (categoryId) => {
 
 const categoryB = async (categoryId) => {
   if (categoryId == 0) return '';
-  return `AND categories.id = ${categoryId}`;
+  return `AND c.id = ${categoryId}`;
 };
 
 module.exports = { order, page, categoryA, categoryB };
