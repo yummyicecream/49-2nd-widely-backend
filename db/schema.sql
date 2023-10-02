@@ -35,7 +35,7 @@ CREATE TABLE `carts` (
   `product_qty` int NOT NULL,
   `status_id` int NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `status_id` (`status_id`),
   KEY `user_id` (`user_id`),
@@ -92,6 +92,7 @@ CREATE TABLE `order_details` (
   `product_id` int NOT NULL,
   `product_count` int NOT NULL,
   `product_price` int NOT NULL,
+  `delivery_fee` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`),
   KEY `order_id` (`order_id`),
@@ -134,7 +135,7 @@ CREATE TABLE `payments` (
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `points` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `point` int NOT NULL,
+  `point` int DEFAULT '0',
   `user_id` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -171,7 +172,7 @@ CREATE TABLE `products` (
   `stock` int NOT NULL,
   `description` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`),
   CONSTRAINT `products_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
@@ -200,7 +201,7 @@ CREATE TABLE `user_orders` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `order_number` int NOT NULL,
-  `address_id` int NOT NULL,
+  `address_id` int DEFAULT NULL,
   `zipcode` varchar(20) NOT NULL,
   `address1` varchar(50) NOT NULL,
   `address2` varchar(50) DEFAULT NULL,
@@ -230,7 +231,7 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL,
   `password` varchar(200) NOT NULL,
   `name` varchar(20) NOT NULL,
-  `user_point` int NOT NULL,
+  `user_point` int DEFAULT NULL,
   `zipcode` varchar(20) NOT NULL,
   `address1` varchar(50) NOT NULL,
   `address2` varchar(50) DEFAULT NULL,
@@ -238,7 +239,7 @@ CREATE TABLE `users` (
   `birthday` date DEFAULT NULL,
   `terms` tinyint(1) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `deleted_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   KEY `user_point` (`user_point`),

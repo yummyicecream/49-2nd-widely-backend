@@ -3,7 +3,7 @@ CREATE TABLE `user_orders` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `order_number` int NOT NULL,
-  `address_id` int NOT NULL,
+  `address_id` int,
   `zipcode` varchar(20) NOT NULL,
   `address1` varchar(50) NOT NULL,
   `address2` varchar(50),
