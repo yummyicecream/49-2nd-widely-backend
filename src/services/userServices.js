@@ -10,7 +10,7 @@ const isEmailUnique = async (email) => {
 const registerUser = async (email, password, name, address1, address2, address3, phonenumber, birthday, terms) => {
   try {
     const passwordHash = await bcrypt.hash(password, 12);
-    const newPoint = 20000;
+    const newPoint = 30000;
 
     return await createUserAndPoint(
       email,
