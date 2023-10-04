@@ -1,12 +1,24 @@
 const { cartDao } = require('../models');
 const { throwError } = require('../utils');
 
-// 장바구니 추가
+// 장바구니 
 const insertCartServices = async(userId, productId, productQty) => {
     const statusId = 1;
-    await cartDao.insertCart(userId, productId, productQty, statusId)
-
+    const findByProduct = await cartDao.findByProduct(userId, productId)
+    console.log(findByProduct)
+    try{
+    if (findByProduct) {
+        await cartDao.plusQty(userId, productId, productQty)
+    } else {
+        await cartDao.insertCart(userId, productId, productQty, statusId)
+    }
+}catch (err){
+    console.error(err);
+    throwError (400, "Insert error")
+}
 };
+
+
 
 // 장바구니 조회
 const getCartServices = async(userId) => {
