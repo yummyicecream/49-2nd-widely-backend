@@ -41,21 +41,68 @@ const getCartList = async(userId) => {
     return cartInfo
 };
 
-// 장바구니 수량 수정
-// const updateCart = async()
-
-// 장바구니 전체 삭제
-const deleteCart = async(userId, productId) => {
+// 장바구니 체크박스
+const checkBox = async(userId ,cartId, statusId) => {
     await AppDataSource.query(`
-    DELETE FROM carts
+    UPDATE carts
+    SET status_id = ?
+    WHERE user_id =? AND id =?
+    `,
+    [statusId, userId, cartId]
+    )
+}
+
+// 상품 수량 체크
+const checkStock = async(productId) => {
+    const check = await AppDataSource.query(`
+    SELCET stock
+    FROM products p WHERE p.id =?
+    `,
+    [productId]
+    );
+    return check;
+} 
+
+// 장바구니 수량 수정
+const updateCart = async(productQty, userId, productId) => {
+    const result = await AppDataSource.query(`
+    UPDATE carts 
+    SET product_qty =?
     WHERE user_id =? AND product_id =?
     `,
-    [userId, productId]);
+    [productQty, userId, productId])
+
+    return result;
+}
+
+// 장바구니 전체 삭제
+const deleteCart = async(userId) => {
+    const allDelete = await AppDataSource.query(`
+    DELETE FROM carts
+    WHERE user_id =?
+    `,
+    [userId]);
+    return allDelete;
 };
+
+// 선택 삭제
+const selectDelete = async(userId, productId) => {
+    const selectDelete = await AppDataSource.query(`
+    DELETE FROM carts 
+    WHERE user_id =? AND product_id =?
+    `,
+    [userId, productId]
+    )
+    return selectDelete;
+}
 
 
 module.exports = {
     insertCart,
     getCartList,
-    deleteCart
+    checkBox,
+    checkStock,
+    updateCart,
+    deleteCart,
+    selectDelete
 };
