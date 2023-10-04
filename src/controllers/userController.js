@@ -26,7 +26,6 @@ const signup = async (req, res, next) => {
 
     // 중복된 이메일 체크
     const emailCheck = await isEmailUnique(email);
-    console.log('email: ', emailCheck);
     if (emailCheck.length != 0) {
       throwError(400, 'Duplicate email address');
     }
