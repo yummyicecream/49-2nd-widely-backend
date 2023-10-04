@@ -7,7 +7,7 @@ const viewBySearch = async (keyword) => {
           p.price AS price,
           p.stock AS stock,
           p.description AS description,
-          pi.image AS thumbnail_image
+          pi.image AS thumbnailImage
           FROM 
           products p
           INNER JOIN 

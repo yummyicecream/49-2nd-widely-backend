@@ -4,7 +4,7 @@ const { productController } = require('../controllers');
 const productRouter = express.Router();
 
 productRouter.get('/:id', productController.viewProduct);
-productRouter.get('/categories/:categoryId', asyncWrap(productController.viewByCategory));
-productRouter.get('/', productController.viewMain);
-
+productRouter.get('/', asyncWrap(productController.viewByCategory));
+productRouter.get('/main', productController.viewMain);
+console.log('@@@@@@@@@@');
 module.exports = { productRouter };

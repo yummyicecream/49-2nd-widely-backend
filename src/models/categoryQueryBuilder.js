@@ -11,9 +11,14 @@ const order = async (sort) => {
   }
 };
 
-const page = async (offset) => {
-  if (!offset) return '';
-  return `LIMIT 6 OFFSET ${offset}`;
+const page = async (offset, size) => {
+  if (offset == null || offset == undefined) return '';
+  return `LIMIT ${size} OFFSET ${offset}`;
+};
+
+const week = async (category) => {
+  if (category !== 'new') return '';
+  return 'AND WEEK(p.updated_at) = WEEK(CURDATE())';
 };
 
 const categoryA = async (categoryId) => {
@@ -26,4 +31,4 @@ const categoryB = async (categoryId) => {
   return `AND c.id = ${categoryId}`;
 };
 
-module.exports = { order, page, categoryA, categoryB };
+module.exports = { order, page, week, categoryA, categoryB };

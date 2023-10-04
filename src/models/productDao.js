@@ -9,8 +9,8 @@ const oneProduct = async (id) => {
     p.price AS price,
     p.stock AS stock,
     p.description AS description,
-    t.image AS thumbnail_image,
-    d.image AS detail_image
+    t.image AS thumbnailImage,
+    d.image AS detailImage
     FROM
     products p
     LEFT JOIN 
@@ -39,7 +39,7 @@ const resultA = async (categoryQueryA, categoryId) => {
   return await AppDataSource.query(query);
 };
 
-const resultB = async (categoryQueryB, orderQuery, pageQuery) => {
+const resultB = async (categoryQueryB, weekQuery, orderQuery, pageQuery) => {
   let query = `
           SELECT
           p.id AS id,
@@ -48,7 +48,7 @@ const resultB = async (categoryQueryB, orderQuery, pageQuery) => {
           p.stock AS stock,
           p.description AS description,
           c.name AS category,
-          pi.image AS thumbnail_image
+          pi.image AS thumbnailImage
           FROM 
           products p
           INNER JOIN 
@@ -56,11 +56,12 @@ const resultB = async (categoryQueryB, orderQuery, pageQuery) => {
           INNER JOIN
           product_images pi ON pi.product_id = p.id 
           WHERE 
-          pi.is_thumbnail = 1 ${categoryQueryB}
-           ${orderQuery} 
-           ${pageQuery}
+          pi.is_thumbnail = 1
+          ${categoryQueryB}
+          ${weekQuery}
+          ${orderQuery}
+          ${pageQuery}
           `;
-
   return await AppDataSource.query(query);
 };
 
