@@ -38,4 +38,4 @@ const findUserId = async (req) => {
   return await findUserEmail(req);
 };
 
-module.exports = { isEmailUnique, registerUser, userPasswordCheck, tokenValidation, findUserId };
+module.exports = { isEmailUnique, registerUser, userPasswordCheck, findUserId };

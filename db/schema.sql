@@ -92,7 +92,6 @@ CREATE TABLE `order_details` (
   `product_id` int NOT NULL,
   `product_count` int NOT NULL,
   `product_price` int NOT NULL,
-  `delivery_fee` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`),
   KEY `order_id` (`order_id`),
@@ -135,7 +134,7 @@ CREATE TABLE `payments` (
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `points` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `point` int DEFAULT '0',
+  `point` int NOT NULL,
   `user_id` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -208,6 +207,8 @@ CREATE TABLE `user_orders` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `payment_id` int NOT NULL,
   `order_status` int NOT NULL,
+  `delivery_fee` decimal(10,0) NOT NULL,
+  `total_order_amount` decimal(10,0) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `order_status` (`order_status`),
