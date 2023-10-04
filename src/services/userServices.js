@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const { throwError } = require('../utils');
 const { userDao } = require('../models');
-const { emailDuplicateCheck, createUserAndPoint } = userDao;
+const { emailDuplicateCheck, createUserAndPoint, findUserEmail } = userDao;
 
 const isEmailUnique = async (email) => {
   return await emailDuplicateCheck(email);
@@ -34,4 +34,8 @@ const userPasswordCheck = async (password, userPassword) => {
   return await bcrypt.compare(password, userPassword);
 };
 
-module.exports = { isEmailUnique, registerUser, userPasswordCheck };
+const findUserId = async (req) => {
+  return await findUserEmail(req);
+};
+
+module.exports = { isEmailUnique, registerUser, userPasswordCheck, tokenValidation, findUserId };

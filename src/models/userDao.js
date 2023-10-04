@@ -41,4 +41,12 @@ const createUserAndPoint = async (
   return userSignUpPoint;
 };
 
-module.exports = { emailDuplicateCheck, createUserAndPoint };
+const findUserEmail = async ({ name, phonenumber }) => {
+  const [findEmail] = await AppDataSource.query(
+    `SELECT name, email, phone_number FROM users WHERE name = ? AND phone_number = ?`,
+    [name, phonenumber],
+  );
+  return findEmail.email;
+};
+
+module.exports = { emailDuplicateCheck, createUserAndPoint, findUserEmail };

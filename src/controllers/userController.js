@@ -1,6 +1,6 @@
 const { throwError, generateToken } = require('../utils');
 const { userServices } = require('../services');
-const { isEmailUnique, registerUser, userPasswordCheck } = userServices;
+const { isEmailUnique, registerUser, userPasswordCheck, findUserId } = userServices;
 
 const signup = async (req, res, next) => {
   try {
@@ -75,4 +75,15 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, login };
+const findId = async (req, res, next) => {
+  try {
+    return res.status(200).json({
+      userId: `${await findUserId(req.body)}`,
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
+
+module.exports = { signup, login, findId };
