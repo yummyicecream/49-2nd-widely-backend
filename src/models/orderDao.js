@@ -106,13 +106,14 @@ const createOrderData = async (
 
         const getOrderCart = await transactionalEntityManager.query(
             `SELECT 
-                product_id, 
-                product_count,
-                product_price
-            FROM carts
+               c. product_id, 
+               c. product_qty,
+               p. price
+            FROM carts c
+            INNER JOIN products p ON c.product_id = p.id
             WHERE
-                 a.status_id = 1
-            AND a.user_id = ?
+                 c.status_id = 1
+            AND c.user_id = ?
             `,
             [id]
         );
@@ -123,11 +124,11 @@ const createOrderData = async (
 
         for (const cartItem of getOrderCart) {
             const productId = cartItem.product_id;
-            const productCount = cartItem.product_count;
-            const productPrice = cartItem.product_price;
+            const productCount = cartItem.product_qty;
+            const productPrice = cartItem.price;
 
             const createOrderDetail = await transactionalEntityManager.query(
-                `INSERT INTO order_detail
+                `INSERT INTO order_details
                       (order_id, product_id, product_count, product_price)
                   VALUES (?, ?, ?, ?)
                  `,
@@ -172,8 +173,7 @@ const createOrderData = async (
         console.error(err);
         throwError(400, 'Failed to create order in Dao');
     } finally {
-        // 연결 및 엔티티 매니저 닫기
-        await entityManager.close();
+        // 연결 닫기 
         await connection.close();
     }
     // 성공적으로 주문이 처리됐을 경우 반환

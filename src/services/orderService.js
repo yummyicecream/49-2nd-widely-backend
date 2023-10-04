@@ -89,7 +89,7 @@ const createOrder = async (id, addressId, zipcode, address1, address2, usedPoint
     try {
 
         // 구매 수단을 지정하지 않으면 1(포인트)로 설정
-        if (paymentId === undefined) {
+        if (paymentId === null) {
             paymentId = 1
         }
 
