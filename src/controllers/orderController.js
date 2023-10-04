@@ -1,6 +1,6 @@
 const { throwError } = require('../utils');
 const { orderService } = require('../services');
-const { orderForm, createOrder } = orderService;
+const { orderForm, createOrder, orderResult } = orderService;
 
 const getOrder = async (req, res) => {
     const { id } = req.loginUser
@@ -12,12 +12,16 @@ const getOrder = async (req, res) => {
     })
 }
 
-const putOrder = async(req, res) => {
+const postOrder = async(req, res) => {
     const { id }= req.loginUser
-    const { zipcode, address1, address2, usedPoint, paymentId, deliveryFee, totalOrderAmount } = req.body;
-    /*결제수단 선택 안했으면 payment_id = 1 / order_status, 디폴트로 1 (결제완료) */
-    
-    
+    const { addressId, zipcode, address1, address2, usedPoint, paymentId, deliveryFee, totalOrderAmount } = req.body;
+   
+   // 키에러 체크
+   if (!zipcode || !address1 || !address1 || !deliveryFee || !totalOrderAmount) {
+    throwError(400, 'Key error');
+   }
+   
+    await createOrder(id, addressId, zipcode, address1, address2, usedPoint, paymentId, deliveryFee, totalOrderAmount)
     
     return res.status(200).json({
         message : "Order success"
@@ -25,7 +29,11 @@ const putOrder = async(req, res) => {
 }
 
 const getOrderResult = async(req, res) => {
+    const {id} = req.loginUser
 
+    return res.status(200).json({
+        message : "Read success",
+    })
 }
 
-module.exports = { getOrder, putOrder, getOrderResult }
+module.exports = { getOrder, postOrder, getOrderResult }

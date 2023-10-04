@@ -1,12 +1,12 @@
 const { throwError } = require('../utils');
 const { orderDao } = require('../models');
-const { createCartInfo, createUserInfo, createPaymentInfo } = orderDao;
+const { getCartInfo, getUserInfo, getPaymentInfo, findByOrderNumber, createOrderData } = orderDao;
 
 const orderForm = async (userId) => {
     try {
-        const cartInfo = await createCartInfo(userId)
-        const [userInfo] = await createUserInfo(userId)
-        const paymentInfo = await createPaymentInfo()
+        const cartInfo = await getCartInfo(userId)
+        const [userInfo] = await getUserInfo(userId)
+        const paymentInfo = await getPaymentInfo()
 
         console.log(cartInfo)
 
@@ -16,7 +16,7 @@ const orderForm = async (userId) => {
         // 장바구니 정보 
         // for...of : 배열의 각 요소나 객체의 값을 하나씩 가져옴
         for (const cartItem of cartInfo) {
-   
+
             if (userId !== cartItem.user_id) {
                 throwError(403, "Forbidden user in cart");
             }
@@ -53,7 +53,7 @@ const orderForm = async (userId) => {
         }
 
         //주문자 정보
-        if ( userId !== userInfo.id) throwError(403, "Forbidden user in user"); 
+        if (userId !== userInfo.id) throwError(403, "Forbidden user in user");
 
         if (userInfo) {
             orderInfo.name = userInfo.name;
@@ -84,9 +84,56 @@ const orderForm = async (userId) => {
     }
 }
 
-// 커밋 적용하기
-const createOrder = async (userId) => {
+const createOrder = async (id, addressId, zipcode, address1, address2, usedPoint, paymentId, deliveryFee, totalOrderAmount) => {
+    try {
+
+        // 구매 수단을 지정하지 않으면 1(포인트)로 설정
+        if (paymentId === undefined) {
+            paymentId = 1
+        }
+
+        //order_statuss는 기본값 1(결제 완료)
+        const orderStatus = 1;
+
+        //orderNumber가 중복되지 않을 때까지 반복
+        while (true) {
+            // 현재 날짜 포맷 (20231002)
+            const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+            // 2자리 랜덤 숫자 생성
+            const randomDigits = Math.floor(Math.random() * 100).toString().padStart(2, "0");
+
+            const orderNumber = parseInt(`${currentDate}${id}${randomDigits}`);
+
+            // 주문번호 중복 확인
+            const isOrderNumberDuplicate = await findByOrderNumber(orderNumber)
+
+            if (!isOrderNumberDuplicate) {
+    
+                console.log(orderNumber)  //추후 삭제
+
+                return await createOrderData(
+                    id,
+                    orderNumber,
+                    addressId,
+                    zipcode,
+                    address1,
+                    address2,
+                    usedPoint,
+                    paymentId,
+                    orderStatus,
+                    deliveryFee,
+                    totalOrderAmount,
+                );
+            }
+        }
+    } catch (err) {
+        console.log(err)
+        throwError(400, 'Failed to create order')
+    }
+}
+
+const orderResult = async () => {
 
 }
 
-module.exports = { orderForm, createOrder }
+module.exports = { orderForm, createOrder, orderResult }
