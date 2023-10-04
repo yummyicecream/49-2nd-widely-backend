@@ -109,11 +109,9 @@ const createOrder = async (id, addressId, zipcode, address1, address2, usedPoint
             // 주문번호 중복 확인
             isOrderNumberDuplicate = await findByOrderNumber(orderNumber);
         }
-  
-        console.log(orderNumber); // 추후 삭제
 
         // 주문번호가 중복되지 않을 때 주문 생성
-        return await createOrderData(
+        const orderData = await createOrderData(
             id,
             orderNumber,
             addressId,
@@ -126,14 +124,13 @@ const createOrder = async (id, addressId, zipcode, address1, address2, usedPoint
             deliveryFee,
             totalOrderAmount,
         );
+
+        return orderData;
+
     } catch (err) {
         console.log(err);
         throwError(400, 'Failed to create order');
     }
 }
 
-const orderResult = async () => {
-
-}
-
-module.exports = { orderForm, createOrder, orderResult }
+module.exports = { orderForm, createOrder }

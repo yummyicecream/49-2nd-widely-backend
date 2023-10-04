@@ -21,19 +21,18 @@ const postOrder = async(req, res) => {
     throwError(400, 'Key error');
    }
    
-    await createOrder(id, addressId, zipcode, address1, address2, usedPoint, paymentId, deliveryFee, totalOrderAmount)
+    const orderData = await createOrder(id, addressId, zipcode, address1, address2, usedPoint, paymentId, deliveryFee, totalOrderAmount)
     
+    console.log(orderData)
+
     return res.status(202).json({
-        message : "Order success"
-    })
+        message : "Order success",
+        data : {
+            orderNumber : orderData.orderNumber,
+            deliveryFee : orderData.deliveryFee,
+            totalOrderAmount : orderData.totalOrderAmount
+    },
+})
 }
 
-const getOrderResult = async(req, res) => {
-    const {id} = req.loginUser
-
-    return res.status(200).json({
-        message : "Read success",
-    })
-}
-
-module.exports = { getOrder, postOrder, getOrderResult }
+module.exports = { getOrder, postOrder }
