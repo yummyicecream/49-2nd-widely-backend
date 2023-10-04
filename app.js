@@ -31,7 +31,6 @@ app.get('/ping', async (req, res) => {
 });
 
 app.use((err, _, res, next) => {
-  console.log('error handler');
   const status = err.status || 500;
   const errorMessage = err.message || 'Internal Server Error';
 

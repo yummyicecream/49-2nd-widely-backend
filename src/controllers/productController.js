@@ -29,8 +29,6 @@ const viewByCategory = async (req, res) => {
     return res.status(200).json({ data: result });
   }
 
-  //http://localhost:8000/products?category=all&sort=latest&page=1
-
   const result = await productService.viewByCategory(categoryId, sort, offset, page, size);
   return res.status(200).json({ data: result });
 };
