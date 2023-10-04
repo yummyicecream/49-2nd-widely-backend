@@ -78,6 +78,7 @@ const orderForm = async (userId) => {
         }
 
         return orderInfo
+
     } catch (err) {
         console.error(err);
         throwError(400, 'Failed to get order infomation');
@@ -96,39 +97,38 @@ const createOrder = async (id, addressId, zipcode, address1, address2, usedPoint
         const orderStatus = 1;
 
         //orderNumber가 중복되지 않을 때까지 반복
-        while (true) {
+        let orderNumber = null;
+        let isOrderNumberDuplicate = true;
+
+        while (isOrderNumberDuplicate) { // true라면 반복
             // 현재 날짜 포맷 (20231002)
             const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, "");
             // 2자리 랜덤 숫자 생성
             const randomDigits = Math.floor(Math.random() * 100).toString().padStart(2, "0");
-
-            const orderNumber = parseInt(`${currentDate}${id}${randomDigits}`);
-
+            orderNumber = parseInt(`${currentDate}${id}${randomDigits}`);
             // 주문번호 중복 확인
-            const isOrderNumberDuplicate = await findByOrderNumber(orderNumber)
-
-            if (!isOrderNumberDuplicate) {
-    
-                console.log(orderNumber)  //추후 삭제
-
-                return await createOrderData(
-                    id,
-                    orderNumber,
-                    addressId,
-                    zipcode,
-                    address1,
-                    address2,
-                    usedPoint,
-                    paymentId,
-                    orderStatus,
-                    deliveryFee,
-                    totalOrderAmount,
-                );
-            }
+            isOrderNumberDuplicate = await findByOrderNumber(orderNumber);
         }
+  
+        console.log(orderNumber); // 추후 삭제
+
+        // 주문번호가 중복되지 않을 때 주문 생성
+        return await createOrderData(
+            id,
+            orderNumber,
+            addressId,
+            zipcode,
+            address1,
+            address2,
+            usedPoint,
+            paymentId,
+            orderStatus,
+            deliveryFee,
+            totalOrderAmount,
+        );
     } catch (err) {
-        console.log(err)
-        throwError(400, 'Failed to create order')
+        console.log(err);
+        throwError(400, 'Failed to create order');
     }
 }
 

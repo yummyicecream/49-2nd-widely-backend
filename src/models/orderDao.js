@@ -1,5 +1,7 @@
 const { throwError } = require('../utils');
 const { AppDataSource } = require('./data-source');
+const { createConnection } = require('typeorm');
+
 
 const getCartInfo = async (id) => {
     const cartInfo = await AppDataSource.query(
@@ -22,7 +24,6 @@ const getCartInfo = async (id) => {
     return cartInfo;
 
 }
-
 const getUserInfo = async (id) => {
 
     const userInfo = await AppDataSource.query(
@@ -48,7 +49,6 @@ const getUserInfo = async (id) => {
 
     return userInfo;
 }
-
 const getPaymentInfo = async () => {
     const paymentInfo = await AppDataSource.query(
         `SELECT * FROM payments`
@@ -56,17 +56,19 @@ const getPaymentInfo = async () => {
     return paymentInfo
 }
 
+//존재하면 ture
 const findByOrderNumber = async (orderNumber) => {
-    const isOrderNumberDuplicate = await AppDataSource.query(
-        `SELECT order_number 
+    const [checkOrderNumberDuplicate] = await AppDataSource.query(
+        `SELECT COUNT(*) as count
          FROM user_orders 
          WHERE order_number = ? `
         , [orderNumber]
     )
-    return isOrderNumberDuplicate;
+    console.log(checkOrderNumberDuplicate)
+    return checkOrderNumberDuplicate.count > 0;
 }
 
-//트랜젝션 적용하기
+
 const createOrderData = async (
     id,
     orderNumber,
@@ -79,25 +81,30 @@ const createOrderData = async (
     orderStatus,
     deliveryFee,
     totalOrderAmount) => {
-    const connection = await AppDataSource.getConnection();
 
+        const connection = await createConnection();
+        const entityManager = connection.createEntityManager();
+       
     try {
         // 트랜잭션 시작
-        await connection.beginTransaction();
-
+        await entityManager.transaction(async transactionalEntityManager => {
+  
         // 1. user_order 입력
-        const createUserOrder = await connection.query(
+        const createUserOrder =await transactionalEntityManager.query(
             `INSERT INTO user_orders 
-                (user_id, order_number, address_id, zipcode, address1, address2, paymentId, order_status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                (user_id, order_number, address_id, zipcode, address1, address2, 
+                payment_id, order_status, delivery_fee, total_order_amount )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `
-            , [id, orderNumber, addressId, zipcode, address1, address2, usedPoint, paymentId, orderStatus]
+            , [id, orderNumber, addressId, zipcode, address1, address2,
+                paymentId, orderStatus, deliveryFee, totalOrderAmount]
         );
 
-        const [lastInsertIdResult] = await AppDataSource.query(`SELECT LAST_INSERT_ID() as id`);
+        // 2. order_detail 입력
+        const [lastInsertIdResult] = await transactionalEntityManager.query(`SELECT LAST_INSERT_ID() as id`);
         let lastInsertId = lastInsertIdResult.id;
-  
-        const getOrderCart = await connection.query(
+
+        const getOrderCart = await transactionalEntityManager.query(
             `SELECT 
                 product_id, 
                 product_count,
@@ -108,39 +115,69 @@ const createOrderData = async (
             AND a.user_id = ?
             `,
             [id]
-        )
+        );
 
-        const productId = getOrderCart.product_id;
-        const productCount = getOrderCart.product_count;
-        const productPrice = getOrderCart.product_price;
+        if (!getOrderCart) {
+            throwError(500, 'Failed to fetch cart items');
+        };
 
-        // 2. order_detail 입력
-        const createOrderDetail = await connection.query(
-            `INSERT INTO order_detail
-                (order_id, product_id, product_count, product_price, delivery_fee)
-                VALUES (? , ?, ?, ?, ?)
-            `,
-            [lastInsertId, productId, productCount, productPrice]
-        )
+        for (const cartItem of getOrderCart) {
+            const productId = cartItem.product_id;
+            const productCount = cartItem.product_count;
+            const productPrice = cartItem.product_price;
+
+            const createOrderDetail = await transactionalEntityManager.query(
+                `INSERT INTO order_detail
+                      (order_id, product_id, product_count, product_price)
+                  VALUES (?, ?, ?, ?)
+                 `,
+                [lastInsertId, productId, productCount, productPrice]
+            )
+        };
 
         // 3. carts status_id 변경
+        const modifyOrderStatus = await transactionalEntityManager.query(
+            `UPDATE carts
+             SET status_id = 3
+             WHERE status_id = 1 
+             AND user_id = ?
+             `,
+            [id]
+        );
 
         // 4. 포인트 차감
+        if (usedPoint) {
+            const getUserPoint = await transactionalEntityManager.query(
+                `SELECT point FROM points WHERE user_id = ?`,
+                [id]
+            );
 
+            const userPoint = getUserPoint[0].point;
+            const updatedUserPoint = userPoint - usedPoint;
 
-        //커밋
-        await connection.commit()
-        //트랜잭션 종료
-        connection.release();
-        // 성공적으로 주문이 처리됐을 경우 반환
-        return 'Order placed successfully';
+            if (updatedUserPoint >= 0) {
+
+                const modifyUserPoint = await transactionalEntityManager.query(
+                    `UPDATE points SET point = ? WHERE user_id = ?`,
+                    [updatedUserPoint, id]
+                );
+            } else {
+                throwError(400, 'Insufficient points')
+            };
+        };
+    });
 
     } catch (err) {
         // 롤백 및 에러 처리
-        await connection.rollback();
         console.error(err);
         throwError(400, 'Failed to create order in Dao');
+    } finally {
+        // 연결 및 엔티티 매니저 닫기
+        await entityManager.close();
+        await connection.close();
     }
+    // 성공적으로 주문이 처리됐을 경우 반환
+    return 'Order placed successfully';
 
 }
 
