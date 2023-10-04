@@ -1,11 +1,12 @@
 const { throwError } = require('../utils');
 const { orderDao } = require('../models');
-const { getCartInfo, getUserInfo, getPaymentInfo, findByOrderNumber, createOrderData } = orderDao;
+const { getCartInfo, getUserInfo, getDeliveryAddressInfo, getPaymentInfo, findByOrderNumber, createOrderData } = orderDao;
 
 const orderForm = async (userId) => {
     try {
         const cartInfo = await getCartInfo(userId)
         const [userInfo] = await getUserInfo(userId)
+        const adreessInfo = await getDeliveryAddressInfo(userId)
         const paymentInfo = await getPaymentInfo()
 
         console.log(cartInfo)
@@ -66,6 +67,20 @@ const orderForm = async (userId) => {
         } else {
             throwError(400, "User information not found");
         }
+
+        // 배송지 정보
+        if (adreessInfo && adreessInfo.length > 0) {
+            orderInfo.address = adreessInfo.map(address => ({
+                addressId : address.id,
+                addressName : address.address_name,
+                recipientName : address.recipient_name,
+                phoneNumber: address.phone_number,
+                zipcode : address.zipcode,
+                address1: address.address1,
+                address2: address.address2
+
+            }))
+        } 
 
         //결제수단 정보
         if (paymentInfo && paymentInfo.length > 0) {

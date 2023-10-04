@@ -50,20 +50,23 @@ const getUserInfo = async (id) => {
     return userInfo;
 }
 
-const getDeliveryInfo = async (id) => {
-    const deliveryInfo = await AppDataSource.query(
-        `SELECT 
-          name,
-          zipcode,
-          address1,
-          address2
+const getDeliveryAddressInfo = async (id) => {
+    const addressInfo = await AppDataSource.query(
+        `SELECT
+             id,
+             address_name,
+             recipient_name,
+             phone_number,
+             zipcode,
+             address1,
+             address2
         FROM delivery_address
         WHERE user_id = ? 
         `,
         [id]
     )
 
-    return deliveryInfo;
+    return addressInfo;
 }
 const getPaymentInfo = async () => {
     const paymentInfo = await AppDataSource.query(
@@ -195,4 +198,4 @@ const createOrderData = async (
 
 }
 
-module.exports = { getCartInfo, getUserInfo, getPaymentInfo, createOrderData, findByOrderNumber };
+module.exports = { getCartInfo, getUserInfo, getDeliveryAddressInfo, getPaymentInfo, createOrderData, findByOrderNumber };

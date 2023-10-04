@@ -1,6 +1,6 @@
 const { throwError } = require('../utils');
 const { orderService }  = require('../services');
-const { orderForm, createOrder, orderResult } = orderService;
+const { orderForm, createOrder} = orderService;
 
 const getOrder = async (req, res) => {
     const { id }  = req.loginUser
