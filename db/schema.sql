@@ -68,7 +68,8 @@ CREATE TABLE `categories` (
 CREATE TABLE `delivery_address` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `name` varchar(20) NOT NULL,
+  `address_name` varchar(20) NOT NULL,
+  `recipient_name` varchar(20) NOT NULL,
   `phone_number` varchar(20) NOT NULL,
   `zipcode` varchar(20) NOT NULL,
   `address1` varchar(50) NOT NULL,
@@ -199,7 +200,7 @@ CREATE TABLE `schema_migrations` (
 CREATE TABLE `user_orders` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `order_number` int NOT NULL,
+  `order_number` bigint DEFAULT NULL,
   `address_id` int DEFAULT NULL,
   `zipcode` varchar(20) NOT NULL,
   `address1` varchar(50) NOT NULL,

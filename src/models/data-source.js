@@ -9,6 +9,7 @@ const AppDataSource = new DataSource({
   database: process.env.TYPEORM_DATABASE,
   bigNumberStrings: false,
   supportBigNumbers: true,
+  logging: true,
 });
 
 module.exports = { AppDataSource };

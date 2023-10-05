@@ -1,7 +1,6 @@
 const userServices = require('./userServices');
 const cartServices = require('./cartServices');
+const productService = require('./productService');
+const searchService = require('./searchService');
 
-module.exports = { 
-    userServices,
-    cartServices
-};
+module.exports = { productService, searchService, userServices, cartServices };
