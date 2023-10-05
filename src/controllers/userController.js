@@ -71,9 +71,10 @@ const login = async (req, res, next) => {
       const token = generateToken(emailCheck.id);
       if (!token) throwError(401, 'Token generation failure');
 
-      res.setHeader('Authorization', `Bearer ${token}`);
+      // res.setHeader('Authorization', `Bearer ${token}`);
       return res.status(200).json({
         message: 'Login success',
+        token: `${token}`,
       });
     }
   } catch (err) {
