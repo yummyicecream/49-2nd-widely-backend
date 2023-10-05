@@ -10,8 +10,6 @@ const orderForm = async (userId) => {
         const adreessInfo = await getDeliveryAddressInfo(userId)
         const paymentInfo = await getPaymentInfo()
 
-        console.log(cartInfo)
-
         let orderInfo = {};
         let deliveryFee = 0;
 
@@ -93,7 +91,7 @@ const orderForm = async (userId) => {
             throwError(400, "Payment information not found");
         }
 
-        return orderInfo
+        return orderInfo;
 
     } catch (err) {
         console.error(err);
@@ -103,7 +101,6 @@ const orderForm = async (userId) => {
 
 const createOrder = async (id, addressId, zipcode, address1, address2, usedPoint, paymentId, deliveryFee, totalOrderAmount) => {
     try {
-
         // 구매 수단을 지정하지 않으면 1(포인트)로 설정
         if (paymentId === null) {
             paymentId = 1
@@ -152,7 +149,6 @@ const createOrder = async (id, addressId, zipcode, address1, address2, usedPoint
 const createDeliveryAddress = async ( id, addressName, recipientName, phoneNumber, zipcode, address1, address2 ) => {
 
     try {
-        
         const addedAddress = await createAddress ( id, addressName, recipientName, phoneNumber, zipcode, address1, address2)
       
         return addedAddress;
@@ -166,7 +162,6 @@ const createDeliveryAddress = async ( id, addressName, recipientName, phoneNumbe
 const deleteDeliveryAddress = async (id, addressId) => {
     
     try {
-
         if (!addressId) throwError (400, 'Invalid address id')
         
         await deleteAddress(id, addressId)
@@ -175,8 +170,6 @@ const deleteDeliveryAddress = async (id, addressId) => {
         console.log(err);
         throwError (400, 'Failed to delete delivery address')
     }
-
 }
-
 
 module.exports = { orderForm, createOrder, createDeliveryAddress, deleteDeliveryAddress }

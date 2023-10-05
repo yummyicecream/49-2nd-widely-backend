@@ -22,8 +22,6 @@ const postOrder = async(req, res) => {
    }
    
     const orderData = await createOrder(id, addressId, zipcode, address1, address2, usedPoint, paymentId, deliveryFee, totalOrderAmount)
-    
-    console.log(orderData)
 
     return res.status(202).json({
         message : "Order success",
@@ -55,8 +53,7 @@ const postAddress = async(req, res) => {
 const deleteAddress = async(req, res) => {
 
     const { id } = req.loginUser;
-    const addressId = req.params.addressId;
-    console.log(addressId)
+    const { addressId } = req.params;
 
     await deleteDeliveryAddress(id, addressId)
 

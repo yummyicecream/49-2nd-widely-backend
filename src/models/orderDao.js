@@ -1,4 +1,3 @@
-const { application } = require('express');
 const { throwError } = require('../utils');
 const { AppDataSource } = require('./data-source');
 const { createConnection } = require('typeorm');
@@ -46,12 +45,11 @@ const getUserInfo = async (id) => {
     `,
         [id]
     )
-    console.log("userInfo : ", userInfo)
-
+    
     return userInfo;
 }
-
 const getDeliveryAddressInfo = async (id) => {
+    
     const addressInfo = await AppDataSource.query(
         `SELECT
              id,
@@ -70,23 +68,23 @@ const getDeliveryAddressInfo = async (id) => {
     return addressInfo;
 }
 const getPaymentInfo = async () => {
+  
     const paymentInfo = await AppDataSource.query(
         `SELECT * FROM payments`
     )
     return paymentInfo
 }
-
-//존재하면 ture
 const findByOrderNumber = async (orderNumber) => {
+   
     const [checkOrderNumberDuplicate] = await AppDataSource.query(
         `SELECT COUNT(*) as count
          FROM user_orders 
-         WHERE order_number = ? `
-        , [orderNumber]
+         WHERE order_number = ? 
+        `, 
+        [orderNumber]
     )
-    return checkOrderNumberDuplicate.count > 0;
+    return checkOrderNumberDuplicate.count > 0; //존재하면 ture
 }
-
 const createOrderData = async (
     id,
     orderNumber,
@@ -196,9 +194,7 @@ const createOrderData = async (
     }
     // 성공적으로 주문이 처리됐을 경우 반환
     return { orderNumber, deliveryFee, totalOrderAmount };
-
 }
-
 const createAddress = async (
     id,
     addressName,
@@ -208,7 +204,6 @@ const createAddress = async (
     address1,
     address2
     ) => {
-
 
     const addDeliveryAddress = await AppDataSource.query(
         `
@@ -222,7 +217,6 @@ const createAddress = async (
     return { addressName, recipientName, phoneNumber, zipcode, address1, address2 };
 
 }
-
 const deleteAddress = async (id, addressId) => {
     
     const deleteAddressData = await AppDataSource.query(
@@ -232,6 +226,11 @@ const deleteAddress = async (id, addressId) => {
         `,
         [id, addressId]
     )
+
+    // deleteAddressData가 null 또는 빈 배열이면 에러 처리
+    if (!deleteAddressData || deleteAddressData.affectedRows === 0) {
+        throwError(400, 'Invalid address id');
+    }
 }
 
 module.exports = { getCartInfo, getUserInfo, getDeliveryAddressInfo, 
