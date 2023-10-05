@@ -25,7 +25,7 @@ const signup = async (req, res, next) => {
     if (!emailRegex.test(email)) throwError(400, 'Invalid email address');
 
     // 비밀번호 11자 이상 16자 이내 체크
-    if (password.length < 10 && password.length < 17) throwError(400, 'Invalid password');
+    if (password.length > 10 && password.length < 17) throwError(400, 'Invalid password');
 
     // 비밀번호 특수문자 유무 체크
     const specialChar = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
