@@ -1,3 +1,4 @@
+const { application } = require('express');
 const { throwError } = require('../utils');
 const { AppDataSource } = require('./data-source');
 const { createConnection } = require('typeorm');
@@ -198,4 +199,28 @@ const createOrderData = async (
 
 }
 
-module.exports = { getCartInfo, getUserInfo, getDeliveryAddressInfo, getPaymentInfo, createOrderData, findByOrderNumber };
+const createAddress = async (
+    id,
+    addressName,
+    recipientName,
+    phoneNumber,
+    zipcode,
+    address1,
+    address2
+    ) => {
+
+
+    const addDeliveryAddress = await AppDataSource.query(
+        `
+         INSERT INTO delivery_address
+         (user_id, address_name, recipient_name, phone_number, zipcode, address1, address2)
+         VALUES (?, ?, ?, ?, ?, ?, ?)
+        `,
+        [id, addressName, recipientName, phoneNumber, zipcode, address1, address2 ]
+    )
+
+    return { addressName, recipientName, phoneNumber, zipcode, address1, address2 };
+
+}
+
+module.exports = { getCartInfo, getUserInfo, getDeliveryAddressInfo, getPaymentInfo, createOrderData, findByOrderNumber, createAddress };

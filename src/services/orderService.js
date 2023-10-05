@@ -1,6 +1,7 @@
 const { throwError } = require('../utils');
 const { orderDao } = require('../models');
-const { getCartInfo, getUserInfo, getDeliveryAddressInfo, getPaymentInfo, findByOrderNumber, createOrderData } = orderDao;
+const { getCartInfo, getUserInfo, getDeliveryAddressInfo, 
+    getPaymentInfo, findByOrderNumber, createOrderData, createAddress } = orderDao;
 
 const orderForm = async (userId) => {
     try {
@@ -148,4 +149,17 @@ const createOrder = async (id, addressId, zipcode, address1, address2, usedPoint
     }
 }
 
-module.exports = { orderForm, createOrder }
+const createDeliveryAddress = async ( id, addressName, recipientName, phoneNumber, zipcode, address1, address2 ) => {
+
+    try {
+        const addedAddress = await createAddress ( id, addressName, recipientName, phoneNumber, zipcode, address1, address2)
+      
+        return addedAddress;
+
+    } catch(err) {
+        console.log(err);
+        throwError(400, 'Failed to add delivery address')
+    }
+}
+
+module.exports = { orderForm, createOrder, createDeliveryAddress }

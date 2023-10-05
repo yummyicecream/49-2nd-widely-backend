@@ -1,6 +1,6 @@
 const { throwError } = require('../utils');
 const { orderService }  = require('../services');
-const { orderForm, createOrder} = orderService;
+const { orderForm, createOrder, createDeliveryAddress} = orderService;
 
 const getOrder = async (req, res) => {
     const { id }  = req.loginUser
@@ -35,4 +35,21 @@ const postOrder = async(req, res) => {
 })
 }
 
-module.exports = { getOrder, postOrder }
+const postAddress = async(req, res) => {
+    const { id } = req.loginUser;
+    const { addressName, recipientName, phoneNumber, zipcode, address1, address2 } = req.body;
+
+    //키에러 체크
+    if ( !addressName || !recipientName || !phoneNumber || !zipcode || !address1) {
+        throwError(400, 'Key error');
+    }
+
+    const addressData = await createDeliveryAddress(id, addressName, recipientName, phoneNumber, zipcode, address1, address2)
+
+    return res.status(201).json({
+        message : "Add success",
+        data : addressData
+    })
+}
+
+module.exports = { getOrder, postOrder, postAddress }
