@@ -33,12 +33,40 @@ const createUserAndPoint = async (
   let lastInsertId = lastInsertIdResult.id;
 
   // 신규유저 포인트 생성
-  const userSignUpPoint = await AppDataSource.query(`INSERT INTO points (point, user_id) VALUES (?, ?)`, [
-    newPoint,
-    lastInsertId,
-  ]);
+  const userSignUpPoint = await AppDataSource.query(
+    `
+    INSERT INTO points (point, user_id) VALUES (?, ?)`,
+    [newPoint, lastInsertId],
+  );
 
   return userSignUpPoint;
 };
 
-module.exports = { emailDuplicateCheck, createUserAndPoint };
+const findUserEmail = async ({ name, phonenumber }) => {
+  const [findEmail] = await AppDataSource.query(
+    `
+    SELECT name, email, phone_number FROM users WHERE name = ? AND phone_number = ?`,
+    [name, phonenumber],
+  );
+  return findEmail.email;
+};
+
+const findUserNameEmail = async ({ name, email }) => {
+  const [findNameEmail] = await AppDataSource.query(
+    `
+    SELECT name, password, email FROM users WHERE name = ? AND email = ?`,
+    [name, email],
+  );
+  return findNameEmail;
+};
+
+const userUpdatePassword = async (email, password) => {
+  const updatePassword = await AppDataSource.query(
+    `
+  UPDATE users SET password = ? WHERE email = ?`,
+    [password, email],
+  );
+  return updatePassword;
+};
+
+module.exports = { emailDuplicateCheck, createUserAndPoint, findUserEmail, findUserNameEmail, userUpdatePassword };
