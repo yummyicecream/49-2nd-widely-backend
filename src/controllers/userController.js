@@ -1,6 +1,6 @@
 const { throwError, generateToken } = require('../utils');
 const { userServices } = require('../services');
-const { isEmailUnique, registerUser, userPasswordCheck, findUserId } = userServices;
+const { isEmailUnique, registerUser, userPasswordCheck, findUserId, findUserPassword } = userServices;
 
 const signup = async (req, res, next) => {
   try {
@@ -93,4 +93,16 @@ const findId = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, login, findId };
+const findPassword = async (req, res, next) => {
+  try {
+    await findUserPassword(req.body);
+    return res.status(200).json({
+      message: '',
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
+
+module.exports = { signup, login, logout, findId, findPassword };
