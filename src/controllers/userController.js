@@ -105,4 +105,4 @@ const findPassword = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, login, logout, findId, findPassword };
+module.exports = { signup, login, findId, findPassword };
