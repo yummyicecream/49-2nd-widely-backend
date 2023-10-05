@@ -6,8 +6,17 @@ const signup = async (req, res, next) => {
   try {
     const { email, password, name, address1, address2, address3, phonenumber, birthday, terms } = req.body;
 
-    // 키에러 체크
-    if (!email || !password || !name || !address1 || !address2 || !address3 || !phonenumber || !birthday || !terms) {
+    if (
+      !email ||
+      !password ||
+      !name ||
+      !address1 ||
+      !address2 ||
+      !address3 ||
+      !phonenumber ||
+      !birthday ||
+      (terms !== 0 && terms !== 1)
+    ) {
       throwError(400, 'Key error');
     }
 
@@ -64,9 +73,7 @@ const login = async (req, res, next) => {
 
       res.setHeader('Authorization', `Bearer ${token}`);
       return res.status(200).json({
-        message: 'login success',
-        token: `${token}`,
-        id: `${emailCheck.id}`,
+        message: 'Login success',
       });
     }
   } catch (err) {
