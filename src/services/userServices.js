@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { throwError } = require('../utils');
 const { userDao } = require('../models');
@@ -87,7 +86,6 @@ module.exports = {
   isEmailUnique,
   registerUser,
   userPasswordCheck,
-  tokenValidation,
   findUserId,
   findUserPassword,
 };
