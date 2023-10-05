@@ -135,7 +135,7 @@ CREATE TABLE `payments` (
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `points` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `point` int DEFAULT '0',
+  `point` int NOT NULL,
   `user_id` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
