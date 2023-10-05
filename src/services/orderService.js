@@ -1,7 +1,7 @@
 const { throwError } = require('../utils');
 const { orderDao } = require('../models');
-const { getCartInfo, getUserInfo, getDeliveryAddressInfo, 
-    getPaymentInfo, findByOrderNumber, createOrderData, createAddress } = orderDao;
+const { getCartInfo, getUserInfo, getDeliveryAddressInfo, getPaymentInfo, 
+    findByOrderNumber, createOrderData, createAddress, deleteAddress } = orderDao;
 
 const orderForm = async (userId) => {
     try {
@@ -152,6 +152,7 @@ const createOrder = async (id, addressId, zipcode, address1, address2, usedPoint
 const createDeliveryAddress = async ( id, addressName, recipientName, phoneNumber, zipcode, address1, address2 ) => {
 
     try {
+        
         const addedAddress = await createAddress ( id, addressName, recipientName, phoneNumber, zipcode, address1, address2)
       
         return addedAddress;
@@ -162,4 +163,20 @@ const createDeliveryAddress = async ( id, addressName, recipientName, phoneNumbe
     }
 }
 
-module.exports = { orderForm, createOrder, createDeliveryAddress }
+const deleteDeliveryAddress = async (id, addressId) => {
+    
+    try {
+
+        if (!addressId) throwError (400, 'Invalid address id')
+        
+        await deleteAddress(id, addressId)
+
+    } catch(err) {
+        console.log(err);
+        throwError (400, 'Failed to delete delivery address')
+    }
+
+}
+
+
+module.exports = { orderForm, createOrder, createDeliveryAddress, deleteDeliveryAddress }

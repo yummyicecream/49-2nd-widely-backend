@@ -223,4 +223,16 @@ const createAddress = async (
 
 }
 
-module.exports = { getCartInfo, getUserInfo, getDeliveryAddressInfo, getPaymentInfo, createOrderData, findByOrderNumber, createAddress };
+const deleteAddress = async (id, addressId) => {
+    
+    const deleteAddressData = await AppDataSource.query(
+        `DELETE FROM delivery_address
+        WHERE user_id = ? 
+        AND id = ?
+        `,
+        [id, addressId]
+    )
+}
+
+module.exports = { getCartInfo, getUserInfo, getDeliveryAddressInfo, 
+    getPaymentInfo, createOrderData, findByOrderNumber, createAddress, deleteAddress };

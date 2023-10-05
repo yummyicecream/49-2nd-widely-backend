@@ -1,6 +1,6 @@
 const { throwError } = require('../utils');
 const { orderService }  = require('../services');
-const { orderForm, createOrder, createDeliveryAddress} = orderService;
+const { orderForm, createOrder, createDeliveryAddress, deleteDeliveryAddress} = orderService;
 
 const getOrder = async (req, res) => {
     const { id }  = req.loginUser
@@ -52,4 +52,17 @@ const postAddress = async(req, res) => {
     })
 }
 
-module.exports = { getOrder, postOrder, postAddress }
+const deleteAddress = async(req, res) => {
+
+    const { id } = req.loginUser;
+    const addressId = req.params.addressId;
+    console.log(addressId)
+
+    await deleteDeliveryAddress(id, addressId)
+
+    return res.status(201).json({
+        message : "Delete success"
+    })
+}
+
+module.exports = { getOrder, postOrder, postAddress, deleteAddress }
