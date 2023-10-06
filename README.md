@@ -19,18 +19,19 @@
 # 적용 기술 및 구현 기능
 ## 적용 기술
 - Front-End : React.js, sass
-- Back-End : Node.js, Express.js, Bcrypt, My SQL
+- Back-End : Node.js, Express.js, Bcrypt, My SQL, Nodemailer
 - Common : RESTful API <br>
 
-##데이터베이스
+## 데이터베이스
 - ![image](https://github.com/wecode-bootcamp-korea/49-2nd-widely-backend/assets/124764329/fa9fc799-3d92-4e3b-b4de-fdab1fc80dc7)
 
 
 ## 구현 기능
 ### 👩‍💻 user
--
--
--
+- 회원가입 시 입력된 정보를 기반으로 유저 등록
+- 로그인 시 가입된 유저를 체크 후 토큰 발급
+- 아이디 찾기 시 동일한 유저가 있는지 체크 후 결과 값 반환
+- 비밀번호 찾기 시 임시 비밀번호를 생성, 수정 후 메일로 전송
 ### 🎁 product
 -
 -
