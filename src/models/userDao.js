@@ -1,14 +1,19 @@
 const { AppDataSource } = require('./data-source');
 
 const emailDuplicateCheck = async (email) => {
-  const emailCheck = await AppDataSource.query(
-    `
-    SELECT id, email, password
-    FROM users
-    WHERE email = ?;`,
-    [email],
-  );
-  return emailCheck;
+  try {
+    const result = await AppDataSource.query(
+      `
+      SELECT id, email, password
+      FROM users
+      WHERE email = ?;`,
+      [email],
+    );
+    return result;
+  } catch (err) {
+    console.error(err);
+    throwError(500, 'Checking email duplication');
+  }
 };
 
 const createUserAndPoint = async (
@@ -58,30 +63,60 @@ const createUserAndPoint = async (
 };
 
 const findUserEmail = async ({ name, phonenumber }) => {
-  const [findEmail] = await AppDataSource.query(
-    `
-    SELECT name, email, phone_number FROM users WHERE name = ? AND phone_number = ?`,
-    [name, phonenumber],
-  );
-  return findEmail.email;
+  try {
+    const [result] = await AppDataSource.query(
+      `
+      SELECT name, email, phone_number FROM users WHERE name = ? AND phone_number = ?`,
+      [name, phonenumber],
+    );
+
+    if (result !== undefined) {
+      return result.email;
+    } else {
+      return null;
+    }
+  } catch (err) {
+    console.error(err);
+    throwError(500, 'Error while finding user email');
+  }
 };
 
 const findUserNameEmail = async ({ name, email }) => {
-  const [findNameEmail] = await AppDataSource.query(
-    `
-    SELECT name, password, email FROM users WHERE name = ? AND email = ?`,
-    [name, email],
-  );
-  return findNameEmail;
+  try {
+    const [result] = await AppDataSource.query(
+      `
+      SELECT name, password, email FROM users WHERE name = ? AND email = ?`,
+      [name, email],
+    );
+
+    if (result !== undefined) {
+      return result;
+    } else {
+      return null;
+    }
+  } catch (err) {
+    console.error(err);
+    throwError(500, 'Error while finding user email');
+  }
 };
 
 const userUpdatePassword = async (email, password) => {
-  const updatePassword = await AppDataSource.query(
-    `
-  UPDATE users SET password = ? WHERE email = ?`,
-    [password, email],
-  );
-  return updatePassword;
+  try {
+    const result = await AppDataSource.query(
+      `
+    UPDATE users SET password = ? WHERE email = ?`,
+      [password, email],
+    );
+
+    if (result.affectedRow > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.error(err);
+    throwError(500, 'Error while updating user password');
+  }
 };
 
 module.exports = { emailDuplicateCheck, createUserAndPoint, findUserEmail, findUserNameEmail, userUpdatePassword };

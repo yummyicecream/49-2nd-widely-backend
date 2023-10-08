@@ -41,6 +41,9 @@ const findUserId = async (req) => {
 
 const findUserPassword = async (req) => {
   const userCheck = await findUserNameEmail(req);
+  if (userCheck == null) {
+    throwError(404, 'Email not found');
+  }
 
   const generateRandomString = (length) => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!%^&*_+?';
@@ -68,15 +71,14 @@ const findUserPassword = async (req) => {
     });
     const message = {
       from: process.env.MAILER_ID,
-      // to: `${req.email}`,
-      to: process.env.MAILER_ID,
+      to: `${req.email}`,
       subject: 'widely에서 임시비밀번호를 알려드립니다.',
       html: `임시비밀번호: <strong>${resetPassword}</strong>`,
     };
     return transport.sendMail(message, (err) => {
       if (err) {
         console.error(err);
-        throwError(400, 'error message');
+        throwError(400, 'Error in finding user password');
       }
     });
   }
