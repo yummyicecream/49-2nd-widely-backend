@@ -3,9 +3,9 @@ const { AppDataSource } = require('./data-source');
 const emailDuplicateCheck = async (email) => {
   const emailCheck = await AppDataSource.query(
     `
-  SELECT id, email, password
-  FROM users
-  WHERE email = ?;`,
+    SELECT id, email, password
+    FROM users
+    WHERE email = ?;`,
     [email],
   );
   return emailCheck;
@@ -23,23 +23,38 @@ const createUserAndPoint = async (
   birthday,
   terms,
 ) => {
-  const createUserRecord = await AppDataSource.query(
-    `
-    INSERT INTO users(email, password, name, zipcode, address1, address2, phone_number, birthday, terms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [email, password, name, address1, address2, address3, phonenumber, birthday, terms],
-  );
-
-  const [lastInsertIdResult] = await AppDataSource.query(`SELECT LAST_INSERT_ID() as id`);
-  let lastInsertId = lastInsertIdResult.id;
-
-  // 신규유저 포인트 생성
-  const userSignUpPoint = await AppDataSource.query(
-    `
-    INSERT INTO points (point, user_id) VALUES (?, ?)`,
-    [newPoint, lastInsertId],
-  );
-
-  return userSignUpPoint;
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+  try {
+    const insertUserId = await queryRunner.query(
+      `
+      INSERT INTO users(email, password, name, zipcode, address1, address2, phone_number, birthday, terms)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [email, password, name, address1, address2, address3, phonenumber, birthday, terms],
+    );
+    const insertPointId = await queryRunner.query(
+      `
+      INSERT INTO points (point, user_id)
+      VALUES (?, ?)`,
+      [newPoint, insertUserId.insertId],
+    );
+    await queryRunner.query(
+      `
+      UPDATE users
+      SET user_point = ?
+      WHERE id = ?`,
+      [insertPointId.insertId, insertUserId.insertId],
+    );
+    await queryRunner.commitTransaction();
+    return 'Transaction completed';
+  } catch (err) {
+    console.error(err);
+    await queryRunner.rollbackTransaction();
+    throwError(500, 'Transaction failed');
+  } finally {
+    await queryRunner.release();
+  }
 };
 
 const findUserEmail = async ({ name, phonenumber }) => {
