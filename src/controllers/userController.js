@@ -20,14 +20,11 @@ const signup = async (req, res, next) => {
       throwError(400, 'Key error');
     }
 
-    // 이메일 형식 체크
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) throwError(400, 'Invalid email address');
 
-    // 비밀번호 11자 이상 16자 이내 체크
-    if (password.length > 10 && password.length < 17) throwError(400, 'Invalid password');
+    if (password.length < 10 || password.length > 16) throwError(400, 'Invalid password');
 
-    // 비밀번호 특수문자 유무 체크
     const specialChar = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
     if (!specialChar.test(password)) {
       throwError(400, 'Invalid password');
@@ -98,7 +95,7 @@ const findPassword = async (req, res, next) => {
   try {
     await findUserPassword(req.body);
     return res.status(200).json({
-      message: '',
+      message: 'Password recovery success',
     });
   } catch (err) {
     console.error(err);
