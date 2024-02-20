@@ -12,7 +12,7 @@
 
 ## 담당 기능
 - 고은채 : user - 회원가입/로그인 <br>
-- 이준호 : product - 메인페이지, 상세페이지 <br>
+- 이준호 : product - 메인페이지, 상세페이지, 카테고리, 검색 <br>
 - 차승혁 : cart - 장바구니 / Project Manager<br>
 - 정현우 : order - 주문서, 결제<br>
 
